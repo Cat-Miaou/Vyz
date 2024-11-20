@@ -11,6 +11,16 @@ dta <- dta[-1]
 url <- "https://opendata.paris.fr/explore/dataset/arrondissements/download/?format=geojson"
 paris_sf <- st_read(url)
 
+academie <- st_read("Données brutes/fr-en-contour-academies-2020.geojson")
+
+# academie <- filter(academie, ! name %in% c("La Réunion","Martinique","Guadeloupe","Guyane","Mayotte"))
+
+academie <- st_crop(academie,xmin = -8 , xmax = 10, ymin =41 , ymax = 52)
+
+academie %>% ggplot() +
+  geom_sf()+
+  theme_void()
+
 #Obtention données pour la carte taux de réussite par arrondissement
 dta_paris <- dta %>% filter(code_departement == "075") %>% 
   mutate(taux_ab = nombre_d_admis_mention_ab/inscrits,
