@@ -39,7 +39,6 @@ names(dta)[c(92:107)] <- c("taux_moyen_2008", "taux_moyen_2009", "taux_moyen_201
                            "taux_moyen_2013", "taux_moyen_2014", "taux_moyen_2019", "taux_moyen_2020", "taux_moyen_2018",
                            "taux_moyen_2021")
 
-dta$taux_moyen_2008  <- as.numeric(gsub(",", ".", gsub("%", "", as.character(dta$taux_moyen_2008 )))) / 100
 for(k in names(dta)[c(92:107)]) {
   dta[[k]] <- as.numeric(gsub(",", ".", gsub("%", "", as.character(dta[[k]])))) / 100
 }
@@ -88,7 +87,10 @@ dta_paris_carte <- paris_sf %>%
   left_join(dta_paris, by = "c_ar")
 
 best_school_forever <- dta %>%
-  mutate(moyenne_sur)
+  mutate(moyenne_15ans = rowMeans(across(92:107), na.rm = TRUE)) %>%
+  arrange(desc(moyenne_15ans))
+
+
 #Création de la carte
 #carte_taux <- 
 dta_paris_carte %>% ggplot() +
