@@ -2,6 +2,7 @@ library(tidyverse)
 library(sf)
 library(ggplot2)
 library(dplyr)
+library(RColorBrewer)
 
 #Importation données
 dta <- read.csv("donnees-dnb.csv", dec = ",", stringsAsFactors = TRUE)
@@ -11,15 +12,32 @@ dta <- dta[-1]
 url <- "https://opendata.paris.fr/explore/dataset/arrondissements/download/?format=geojson"
 paris_sf <- st_read(url)
 
-academie <- st_read("Données brutes/fr-en-contour-academies-2020.geojson")
+academie_sf <- st_read("Données brutes/fr-en-contour-academies-2020.geojson")
 
 # academie <- filter(academie, ! name %in% c("La Réunion","Martinique","Guadeloupe","Guyane","Mayotte"))
 
-academie <- st_crop(academie,xmin = -8 , xmax = 10, ymin =41 , ymax = 52)
+academie_sf <- st_crop(academie_sf,xmin = -8 , xmax = 10, ymin =41 , ymax = 52)
+academie_sf <- rename(academie_sf, "libelle_academie" = "libelle_aca_majuscules")
 
-academie %>% ggplot() +
-  geom_sf()+
-  theme_void()
+#On prend les données par académie
+dta_academie <- dta %>% 
+  group_by(libelle_academie) %>% 
+  summarise(taux_moyen = mean(taux_de_reussite)) %>% 
+  select(libelle_academie, taux_moyen)
+
+academie_carte <- academie_sf %>% 
+  left_join(dta_academie, "libelle_academie")
+
+academie_carte %>% ggplot() +
+  geom_sf(aes(fill=taux_moyen),color="black")+
+  theme_minimal()+
+  scale_fill_distiller(palette = "Blues")
+  labs(title = "Taux de réussite au brevet par academies de France Métropolitaine")
+
+
+
+
+
 
 #Obtention données pour la carte taux de réussite par arrondissement
 dta_paris <- dta %>% filter(code_departement == "075") %>% 
