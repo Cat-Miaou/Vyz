@@ -25,6 +25,15 @@ paris_sf <- st_read(url)
 
 academie_sf <- st_read("Données brutes/fr-en-contour-academies-2020.geojson")
 
+college_pos <- fread("fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre.csv")
+college_pos <- college_pos %>%
+  mutate(numero_uai = as.factor(numero_uai)) %>%
+  select(numero_uai, longitude, latitude)
+
+dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", by.y = "numero_uai")
+
+dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
+
 # academie <- filter(academie, ! name %in% c("La Réunion","Martinique","Guadeloupe","Guyane","Mayotte"))
 
 academie_sf <- st_crop(academie_sf,xmin = -8 , xmax = 10, ymin =41 , ymax = 52)
@@ -46,14 +55,6 @@ academie_carte %>% ggplot() +
   labs(title = "Taux de réussite au brevet par academies de France Métropolitaine")
 
 
-college_pos <- fread("fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre.csv")
-college_pos <- college_pos %>%
-  mutate(numero_uai = as.factor(numero_uai)) %>%
-  select(numero_uai, longitude, latitude)
-
-dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", by.y = "numero_uai")
-
-dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
 
 #Obtention données pour la carte taux de réussite par arrondissement
 dta_paris <- dta %>% filter(code_departement == "075") %>% 
@@ -76,6 +77,8 @@ dta_paris$c_ar <- as.numeric(dta_paris$c_ar)
 dta_paris_carte <- paris_sf %>%
   left_join(dta_paris, by = "c_ar")
 
+best_school_forever <- dta %>%
+  mutate(moyenne_sur)
 #Création de la carte
 #carte_taux <- 
 dta_paris_carte %>% ggplot() +
