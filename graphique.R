@@ -2,14 +2,33 @@ library(tidyverse)
 library(sf)
 library(ggplot2)
 library(dplyr)
-
+library(data.table)
 #Importation données
 dta <- read.csv("donnees-dnb.csv", dec = ",", stringsAsFactors = TRUE)
 dta <- dta[-1]
 
+library(readr)
+dnb <- read_delim("Données brutes/dnb.csv", 
+                  delim = ";", escape_double = FALSE, trim_ws = TRUE)
+dnb <- dnb%>%
+  select(UAI, Session,  `Taux de réussite`)
+
+dnb2 <- dnb %>%
+  pivot_wider(names_from = Session, values_from = `Taux de réussite`)
+
+
 #Importation des données de carte
 url <- "https://opendata.paris.fr/explore/dataset/arrondissements/download/?format=geojson"
 paris_sf <- st_read(url)
+
+college_pos <- fread("fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre.csv")
+college_pos <- college_pos %>%
+  mutate(numero_uai = as.factor(numero_uai)) %>%
+  select(numero_uai, longitude, latitude)
+
+dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", by.y = "numero_uai")
+
+dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
 
 #Obtention données pour la carte taux de réussite par arrondissement
 dta_paris <- dta %>% filter(code_departement == "075") %>% 
@@ -24,6 +43,7 @@ dta_paris <- dta %>% filter(code_departement == "075") %>%
   summarise(taux_moyen = mean(taux_de_reussite), ips_moyen = mean(ips),
             taux_moyen_ss = mean(taux_ss), taux_moyen_ab = mean(taux_ab),
             taux_moyen_b = mean(taux_b), taux_moyen_tb = mean(taux_tb))
+
 
 dta_paris$c_ar <- substr(as.character(dta_paris$c_ar), 4, nchar(as.character(dta_paris$c_ar)))
 dta_paris$c_ar <- as.numeric(dta_paris$c_ar)
