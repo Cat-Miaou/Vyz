@@ -58,14 +58,13 @@ dta_paris_pu_pr %>% ggplot() +
 
 #Proportion fille/garcon en 3ème et taux de reussite + coloration privé public
 dta_paris_f_g <- dta %>% filter(code_departement == "075") %>% 
-  mutate(ratio_FG = X3eme_filles/X3emes_garcons) %>% 
-  select(commune, ratio_FG, taux_de_reussite, secteur_d_enseignement) %>% 
-  group_by(commune, secteur_d_enseignement) %>% 
-  summarise(taux_moyen = mean(taux_de_reussite), ratio_FG)
+  mutate(pourcentage_FG = X3emes_garcons/(X3emes_garcons+X3eme_filles)) %>% 
+  select(commune, pourcentage_FG, taux_de_reussite, secteur_d_enseignement)
 
 #probleme des collège non mixte
 
 dta_paris_f_g %>% ggplot() +
-  aes(y = ratio_FG, x = taux_moyen, color = secteur_d_enseignement)+
+  aes(y = pourcentage_FG, x = taux_de_reussite, color = secteur_d_enseignement)+
   geom_point()+
   geom_smooth()
+
