@@ -35,12 +35,10 @@ dta_paris_carte <- paris_sf %>%
 #carte_taux <- 
 dta_paris_carte %>% ggplot() +
   geom_sf(aes(fill = taux_moyen), color = "white") +
-  geom_bar(aes(x = )) +
   scale_fill_viridis_c(option = "plasma", name = "Taux de réussite") +  
   theme_void() +
   labs(title = "Taux de réussite moyen au brevet par arrondissement de Paris",
        caption = "Source: GeoJSON + data.gouv")
-carte_taux
 
 #Obtention des données pour le graph taux de réussite public/privé par arrondissement
 dta_paris_pu_pr <- dta %>% filter(code_departement == "075") %>% 
