@@ -34,6 +34,16 @@ dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", b
 
 dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
 
+names(dta)[c(92:107)] <- c("taux_moyen_2008", "taux_moyen_2009", "taux_moyen_2010", "taux_moyen_2011", "taux_moyen_2006",
+                           "taux_moyen_2007", "taux_moyen_2012", "taux_moyen_2017", "taux_moyen_2015", "taux_moyen_2016",
+                           "taux_moyen_2013", "taux_moyen_2014", "taux_moyen_2019", "taux_moyen_2020", "taux_moyen_2018",
+                           "taux_moyen_2021")
+
+dta$taux_moyen_2008  <- as.numeric(gsub(",", ".", gsub("%", "", as.character(dta$taux_moyen_2008 )))) / 100
+for(k in names(dta)[c(92:107)]) {
+  dta[[k]] <- as.numeric(gsub(",", ".", gsub("%", "", as.character(dta[[k]])))) / 100
+}
+
 # academie <- filter(academie, ! name %in% c("La Réunion","Martinique","Guadeloupe","Guyane","Mayotte"))
 
 academie_sf <- st_crop(academie_sf,xmin = -8 , xmax = 10, ymin =41 , ymax = 52)
