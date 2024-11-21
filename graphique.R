@@ -167,38 +167,59 @@ test2 <- test2 %>% arrange(difference)
 test2$libelle_academie <- fct_reorder(test2$libelle_academie, test2$difference)
 
 test2$libelle_academie <- droplevels(test2$libelle_academie)
-
+test2$secteur_d_enseignement <- as.factor(test2$secteur_d_enseignement)
+levels(test2$secteur_d_enseignement) <- c("Privé", "Public")
 
 test2 %>% ggplot() +
-  geom_point(aes(x = libelle_academie, y = taux_moyen, color = secteur_d_enseignement), size = 5) +
-  geom_line(aes(x = libelle_academie, y = taux_moyen, group = libelle_academie), color = "black", size = 0.5) +
-  geom_hline(yintercept = 88, color = "purple", linetype = "dashed") +
+  geom_line(
+    aes(
+      x = libelle_academie,
+      y = taux_moyen,
+      group = libelle_academie),
+    color = "black",
+    size = 0.8) +
+  geom_point(
+    aes(
+      x = libelle_academie,
+      y = taux_moyen,
+      color = secteur_d_enseignement),
+    size = 6) +
+  
+  geom_hline(
+    aes(yintercept = 88,
+        color = "Moyenne\nnationale"), # Associer une esthétique à la ligne
+    linetype = "dashed",
+    size = 1
+  )+
   theme_minimal() +
-  labs(title = "Taux de réussite au brevet par académie en fonction du secteur d'enseignement",
-       subtitle = "La ligne en pointillés violette correspond à la moyenne nationale",
-       
-       x = "Académie (pourcentage de collège public)",
-       color = "Secteur d'Enseignement",
-       y = "Taux moyen de réussite au brevet"
+  labs(
+    title = "Taux de réussite au brevet par académie en fonction du secteur d'enseignement",
+    subtitle = "La ligne en pointillés violette correspond à la moyenne nationale",
+    x = "Académie (pourcentage de collège public)",
+    color = "Secteur d'Enseignement",
+    y = "Taux moyen de réussite au brevet"
   ) +
   ylim(80, 100)+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 9, color = "grey60"),
-        axis.text.y = element_text(color = "grey60"),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_text(size = 12),
-        plot.title = element_text(hjust = 0.5, size = 20),
-        plot.subtitle = element_text(hjust = 0.5, size = 11, color = "purple4"), #grey40
-        plot.margin = margin(t = 10, r = 10, b = 10, l = 50),
-        legend.title = element_blank()
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1,
+                                   size = 14,
+                                   color = "grey45"),
+        axis.text.y = element_text(color = "grey60",
+                                   size = 14),
+        axis.title.x = element_text(size = 17,
+                                    color = "gray20"),
+        axis.title.y = element_text(size = 17,
+                                    color = "gray20"),
+        plot.title = element_text(hjust = 0.5,
+                                  size = 25),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     size = 20,
+                                     color = "gray30"), #grey40
+        plot.margin = margin(t = 10,
+                             r = 10,
+                             b = 10,
+                             l = 55),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 15)
   ) 
-
-
-#Proportion fille/garcon en 3ème et taux de reussite + coloration privé public
-dta_paris_f_g <- dta %>% filter(code_departement == "075") %>% 
-
-
-#probleme des collège non mixte
-
-dta_paris_f_g %>% ggplot() +
-  aes(y = pourcentage_FG, x = taux_de_reussite, color = secteur_d_enseignement)+
 
