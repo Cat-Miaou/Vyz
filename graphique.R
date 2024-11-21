@@ -299,32 +299,32 @@ dta_admis_mean2 <- dta_admis_mean2 %>%
 
 ggplot() +
   # Lignes et points pour moyennes_long
-  geom_point(data = moyennes_long, size = 3, aes(x = year, y = Proportion, color = Mention)) +
+  geom_point(data = moyennes_long, size = 3, aes(x = year, y = Proportion, color = Mention, shape = Mention)) +
   geom_line(data = moyennes_long, aes(x = year, y = Proportion, color = Mention)) +
   # Lignes et points pour dta_admis_mean2
   geom_point(data = dta_admis_mean2, size = 3, aes(x = year, y = Proportion, color = Mention)) +
   geom_line(data = dta_admis_mean2, aes(x = year, y = Proportion, color = Mention)) +
-  # Lignes verticales de référence avec légende
+  # Lignes verticales de référence
   geom_vline(aes(xintercept = 2006, color = "2006"), linetype = "dashed") + 
   geom_vline(aes(xintercept = 2011, color = "2011"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2017, color = "2017"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2018, color = "2018"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2020, color = "2020"), linetype = "dashed") +
-  # mise en place des flèches pour 2011, 2017, et 2018
+  # Mise en place des flèches pour 2011, 2017, et 2018
   annotate("segment", x = 2008.5, xend = 2010.95, y = 0.6, yend = 0.7, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   annotate("segment", x = 2015, xend = 2016.95, y = 0.6, yend = 0.7, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   annotate("segment", x = 2018.5, xend = 2017.95, y = 0.42, yend = 0.62, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
-  #mise en place des labels pour 2011, 2017 et 2018
+  # Mise en place des labels pour 2011, 2017 et 2018
   geom_label(aes(x = 2008.5, y = 0.58, label = "Histoire des arts"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   geom_label(aes(x = 2015, y = 0.58, label = "Contrôle continu"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
-  geom_label(aes(x = 2018.5, y = 0.4, label = "Épreuves finales \n plus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
+  geom_label(aes(x = 2018.5, y = 0.4, label = " Épreuves finales \nplus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   # Configuration de l'axe Y et des labels
   scale_y_continuous(labels = scales::percent,
                      breaks = c(0.25, 0.5, 0.75, 1),
-                     limits = c(0, 1) ) +
+                     limits = c(0, 1)) +
   scale_color_manual(
     values = c(
       "assez_bien" =  "#D95F02", 
@@ -350,13 +350,18 @@ ggplot() +
   scale_x_continuous(
     breaks = seq(min(moyennes_long$year), max(moyennes_long$year), by = 1) # Toutes les années
   ) +
+  scale_shape_manual(values = c(17, 18, 15, 16, 17, 18)) +  # Ensure you have a shape for each category
+  guides(
+    shape = "none", # Make sure the shapes are visible
+    color = guide_legend(override.aes = list(shape = c(16, 17, 18, 15, 17, 18)))  # Use correct shapes for color legend
+  ) +
   labs(
-    title = "Pourcentage de résussite du brevet et des mentions dans le temps",
+    title = "Pourcentage de réussite du brevet et des mentions dans le temps",
     x = "Année",
     y = "Pourcentage",
     color = "Légende",
-    shape = "Légende",
-    linetype = "Légende"
+    linetype = "Légende",
+    caption = "Source : Data.gouv.fr"
   ) +
   theme_minimal() +
   theme(
@@ -367,6 +372,7 @@ ggplot() +
     axis.line = element_line(color = "black"),
     plot.title = element_text(face = "bold")
   )
+
 
 
 
