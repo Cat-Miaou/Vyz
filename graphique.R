@@ -93,8 +93,7 @@ academie_graph <-
   aes(
     x = libelle_academie,
     y = -0.5,                  
-    fill = "public",
-    height = ratio_public
+    fill = "public"
   ),
   position = "stack",         
   width = 0.4)
@@ -224,9 +223,10 @@ test2 %>% ggplot() +
   ) 
 
 
-#2006 => 2011 => 2017 => 2018 => 2021
+
 # Supposons que votre dataframe s'appelle `df`
 
+#calcul le poucentage de toutes les mentions pour toytes les années
 for (year in 2006:2021) {
   # Construire les noms des colonnes existantes
   col_admis <- paste0("Admis_", year)
@@ -259,23 +259,21 @@ moyennes_nationales <- dta %>%
 
 # Ajouter une colonne pour les années
 
-# Voir le résultat
-print(moyennes_nationales)
 
-
-library(tidyr)
-
+#pivot le dta pour avoir une colonne avec l'année + mention (ab, b ou tb) et une autre avec le pourcentage de personne ayant la mention
 moyennes_long <- moyennes_nationales %>%
   pivot_longer(
     cols = starts_with("Moyenne_"), # Colonnes des moyennes
     names_to = "Mention",
     values_to = "Proportion"
   )
-
+#garde que les colonnes indiquant le taux de réussité du dnb des établissements
 dta_admis <- dta[, c(92:107)]
+#dta avec le pourcentage de réussite nationale du brevet
 dta_admis_mean <- dta_admis %>%
   summarise(across(everything(), ~mean(. , na.rm = TRUE)))
 
+#pivot le dta pour avoir 2 colonnes, une avec la mention taux_annee et l'autre avec la porportion de réussite du dnb en fonction de l'année
 dta_admis_mean2 <- dta_admis_mean %>%
   pivot_longer(
     cols = starts_with("taux_"), # Colonnes des moyennes
@@ -283,13 +281,16 @@ dta_admis_mean2 <- dta_admis_mean %>%
     values_to = "Proportion"
   )
 
+#enleve taux_ dans la colonne year pour ne garder que les années + conversion en numérqiue
 dta_admis_mean2$year <- as.numeric(gsub("taux_", "", dta_admis_mean2$year))
 
 
-# Nettoyer la colonne Mention
+# enleve la mention Moyenne_proportion dans la colonne Mention car ne sert à rien
 moyennes_long$Mention <- gsub("Moyenne_Proportion_", "", moyennes_long$Mention)
+# Nettoyer la colonne Mention en enlevant l'année pour que toutes les valeurs soient les mêmes
 moyennes_long$Mention <- gsub("_\\d{4}$", "", moyennes_long$Mention)
 
+#ajoute l'année pour les mentions, il y a 3 mentions par années, donc l'année est répétée 3 fois
 moyennes_long$year <- rep(2006:2021, each = 3)[1:nrow(moyennes_long)]
 
 # Ajouter une colonne factice dans dta_admis_mean2
@@ -303,31 +304,59 @@ ggplot() +
   # Lignes et points pour dta_admis_mean2
   geom_point(data = dta_admis_mean2, size = 3, aes(x = year, y = Proportion, color = Mention)) +
   geom_line(data = dta_admis_mean2, aes(x = year, y = Proportion, color = Mention)) +
-  geom_line(x = 2006, y = 0, color = "blue") +
+  # Lignes verticales de référence avec légende
+  geom_vline(aes(xintercept = 2006, color = "2006"), linetype = "dashed") + 
+  geom_vline(aes(xintercept = 2011, color = "2011"), linetype = "dashed") +
+  geom_vline(aes(xintercept = 2017, color = "2017"), linetype = "dashed") +
+  geom_vline(aes(xintercept = 2018, color = "2018"), linetype = "dashed") +
+  geom_vline(aes(xintercept = 2020, color = "2020"), linetype = "dashed") +
+  # mise en place des flèches pour 2011, 2017, et 2018
+  annotate("segment", x = 2008.5, xend = 2010.95, y = 0.6, yend = 0.7, 
+           arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
+  annotate("segment", x = 2015, xend = 2016.95, y = 0.6, yend = 0.7, 
+           arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
+  annotate("segment", x = 2018.5, xend = 2017.95, y = 0.42, yend = 0.62, 
+           arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
+  #mise en place des labels pour 2011, 2017 et 2018
+  geom_label(aes(x = 2008.5, y = 0.58, label = "Histoire des arts"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
+  geom_label(aes(x = 2015, y = 0.58, label = "Contrôle continu"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
+  geom_label(aes(x = 2018.5, y = 0.4, label = "Épreuves finales \n plus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   # Configuration de l'axe Y et des labels
-  scale_y_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::percent,
+                     breaks = c(0.25, 0.5, 0.75, 1),
+                     limits = c(0, 1) ) +
   scale_color_manual(
-    values = c("assez_bien" =  "#D95F02", 
-                                "bien" = "#E6AB02",
-                                "très_bien" = "#66A61E", 
-                                "Moyenne générale" =  "#7570B3"),
-                breaks = c("Moyenne générale", "assez_bien", "bien","très_bien"),
+    values = c(
+      "assez_bien" =  "#D95F02", 
+      "bien" = "#E6AB02",
+      "très_bien" = "#66A61E", 
+      "Moyenne générale" =  "#7570B3",
+      "2006" = "blue", 
+      "2011" = "blue", 
+      "2017" = "blue", 
+      "2018" = "blue", 
+      "2020" = "#E7298A"
+    ),
+    breaks = c("Moyenne générale", "assez_bien", "bien", "très_bien", "2006", "2020"),
     labels = c(
       "assez_bien" = "Assez Bien",
       "bien" = "Bien",
       "très_bien" = "Très Bien",
-      "Moyenne générale" = "Taux de réussite"
-    ))+
+      "Moyenne générale" = "Pourcentage de réussite",
+      "2006" = "réformes du brevet",
+      "2020" = "Covid-19"
+    )
+  ) +
   scale_x_continuous(
     breaks = seq(min(moyennes_long$year), max(moyennes_long$year), by = 1) # Toutes les années
   ) +
   labs(
-    title = "Moyenne nationale des mentions dans le temps",
+    title = "Pourcentage de résussite du brevet et des mentions dans le temps",
     x = "Année",
-    y = "Proportion moyenne",
-    color = "Mention",
-    shape = "Mention",
-    linetype = "Mention"
+    y = "Pourcentage",
+    color = "Légende",
+    shape = "Légende",
+    linetype = "Légende"
   ) +
   theme_minimal() +
   theme(
@@ -335,12 +364,13 @@ ggplot() +
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_line(color = "gray80", linetype = "solid"),
     # Conserver les axes
-    axis.line = element_line(color = "black")
+    axis.line = element_line(color = "black"),
+    plot.title = element_text(face = "bold")
   )
-
 
 
 
   colors_set2 <- brewer.pal(n = 8, name = "Dark2")  # "Set2" a jusqu'à 8 couleurs
   print(colors_set2)  # Liste des couleurs en format hexadécimal
+
 
