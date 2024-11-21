@@ -14,10 +14,10 @@ library(readr)
 dnb <- read_delim("Données brutes/dnb.csv", 
                   delim = ";", escape_double = FALSE, trim_ws = TRUE)
 dnb <- dnb%>%
-  select(UAI, Session,  `Taux de réussite`)
+  select(UAI, Session,  `Taux de réussite`, Admis, `Admis sans mention`, `Admis Mention bien`, `Admis Mention très bien`, Nombre_d_admis_Mention_AB)
 
 dnb2 <- dnb %>%
-  pivot_wider(names_from = Session, values_from = `Taux de réussite`)
+  pivot_wider(names_from = Session, values_from = c(`Taux de réussite`, Admis, `Admis sans mention`, `Admis Mention bien`, `Admis Mention très bien`, Nombre_d_admis_Mention_AB))
 
 
 #Importation des données de carte
@@ -35,10 +35,10 @@ dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", b
 
 dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
 
-names(dta)[c(92:107)] <- c("taux_moyen_2008", "taux_moyen_2009", "taux_moyen_2010", "taux_moyen_2011", "taux_moyen_2006",
-                           "taux_moyen_2007", "taux_moyen_2012", "taux_moyen_2017", "taux_moyen_2015", "taux_moyen_2016",
-                           "taux_moyen_2013", "taux_moyen_2014", "taux_moyen_2019", "taux_moyen_2020", "taux_moyen_2018",
-                           "taux_moyen_2021")
+names(dta)[c(92:107)] <- c("taux_2008", "taux_2009", "taux_2010", "taux_2011", "taux_2006",
+                           "taux_2007", "taux_2012", "taux_2017", "taux_2015", "taux_2016",
+                           "taux_2013", "taux_2014", "taux_2019", "taux_2020", "taux_2018",
+                           "taux_2021")
 
 for(k in names(dta)[c(92:107)]) {
   dta[[k]] <- as.numeric(gsub(",", ".", gsub("%", "", as.character(dta[[k]])))) / 100
@@ -222,4 +222,125 @@ test2 %>% ggplot() +
         legend.title = element_blank(),
         legend.text = element_text(size = 15)
   ) 
+
+
+#2006 => 2011 => 2017 => 2018 => 2021
+# Supposons que votre dataframe s'appelle `df`
+
+for (year in 2006:2021) {
+  # Construire les noms des colonnes existantes
+  col_admis <- paste0("Admis_", year)
+  col_bien <- paste0("Admis Mention bien_", year)
+  col_tres_bien <- paste0("Admis Mention très bien_", year)
+  col_assez_bien <- paste0("Nombre_d_admis_Mention_AB_", year)
+  
+  # Noms des nouvelles colonnes pour les proportions
+  col_prop_bien <- paste0("Proportion_bien_", year)
+  col_prop_tres_bien <- paste0("Proportion_très_bien_", year)
+  col_prop_assez_bien <- paste0("Proportion_assez_bien_", year)
+  # Calcul des proportions
+  dta[[col_prop_bien]] <- dta[[col_bien]] / dta[[col_admis]]
+  dta[[col_prop_tres_bien]] <- dta[[col_tres_bien]] / dta[[col_admis]]
+  dta[[col_prop_assez_bien]] <- dta[[col_assez_bien]] / dta[[col_admis]]
+}
+
+
+
+# Calcul de la moyenne nationale pour chaque année
+moyennes_nationales <- dta %>%
+  summarise(
+    across(
+      starts_with("Proportion_"),
+      mean,
+      na.rm = TRUE, # Ignorer les valeurs manquantes
+      .names = "Moyenne_{.col}"
+    )
+  )
+
+# Ajouter une colonne pour les années
+
+# Voir le résultat
+print(moyennes_nationales)
+
+
+library(tidyr)
+
+moyennes_long <- moyennes_nationales %>%
+  pivot_longer(
+    cols = starts_with("Moyenne_"), # Colonnes des moyennes
+    names_to = "Mention",
+    values_to = "Proportion"
+  )
+
+dta_admis <- dta[, c(92:107)]
+dta_admis_mean <- dta_admis %>%
+  summarise(across(everything(), ~mean(. , na.rm = TRUE)))
+
+dta_admis_mean2 <- dta_admis_mean %>%
+  pivot_longer(
+    cols = starts_with("taux_"), # Colonnes des moyennes
+    names_to = "year",
+    values_to = "Proportion"
+  )
+
+dta_admis_mean2$year <- as.numeric(gsub("taux_", "", dta_admis_mean2$year))
+
+
+# Nettoyer la colonne Mention
+moyennes_long$Mention <- gsub("Moyenne_Proportion_", "", moyennes_long$Mention)
+moyennes_long$Mention <- gsub("_\\d{4}$", "", moyennes_long$Mention)
+
+moyennes_long$year <- rep(2006:2021, each = 3)[1:nrow(moyennes_long)]
+
+# Ajouter une colonne factice dans dta_admis_mean2
+dta_admis_mean2 <- dta_admis_mean2 %>%
+  mutate(Mention = "Moyenne générale")  # Une mention unique pour ce dataset
+
+ggplot() +
+  # Lignes et points pour moyennes_long
+  geom_point(data = moyennes_long, size = 3, aes(x = year, y = Proportion, color = Mention)) +
+  geom_line(data = moyennes_long, aes(x = year, y = Proportion, color = Mention)) +
+  # Lignes et points pour dta_admis_mean2
+  geom_point(data = dta_admis_mean2, size = 3, aes(x = year, y = Proportion, color = Mention)) +
+  geom_line(data = dta_admis_mean2, aes(x = year, y = Proportion, color = Mention)) +
+  geom_line(x = 2006, y = 0, color = "blue") +
+  # Configuration de l'axe Y et des labels
+  scale_y_continuous(labels = scales::percent) +
+  scale_color_manual(
+    values = c("assez_bien" =  "#D95F02", 
+                                "bien" = "#E6AB02",
+                                "très_bien" = "#66A61E", 
+                                "Moyenne générale" =  "#7570B3"),
+                breaks = c("Moyenne générale", "assez_bien", "bien","très_bien"),
+    labels = c(
+      "assez_bien" = "Assez Bien",
+      "bien" = "Bien",
+      "très_bien" = "Très Bien",
+      "Moyenne générale" = "Taux de réussite"
+    ))+
+  scale_x_continuous(
+    breaks = seq(min(moyennes_long$year), max(moyennes_long$year), by = 1) # Toutes les années
+  ) +
+  labs(
+    title = "Moyenne nationale des mentions dans le temps",
+    x = "Année",
+    y = "Proportion moyenne",
+    color = "Mention",
+    shape = "Mention",
+    linetype = "Mention"
+  ) +
+  theme_minimal() +
+  theme(
+    # Garder les barres verticales principales
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_line(color = "gray80", linetype = "solid"),
+    # Conserver les axes
+    axis.line = element_line(color = "black")
+  )
+
+
+
+
+  colors_set2 <- brewer.pal(n = 8, name = "Dark2")  # "Set2" a jusqu'à 8 couleurs
+  print(colors_set2)  # Liste des couleurs en format hexadécimal
 
