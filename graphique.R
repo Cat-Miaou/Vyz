@@ -31,11 +31,13 @@ dta_paris$c_ar <- as.numeric(dta_paris$c_ar)
 dta_paris_carte <- paris_sf %>%
   left_join(dta_paris, by = "c_ar")
 
+
+test <- dta %>% group_by(libelle_departement) %>% 
+  summarise(taux_moyen = mean(taux_de_reussite))
+
 #Création de la carte
-#carte_taux <- 
-dta_paris_carte %>% ggplot() +
+carte_taux <- dta_paris_carte %>% ggplot() +
   geom_sf(aes(fill = taux_moyen), color = "white") +
-  geom_bar(aes(x = )) +
   scale_fill_viridis_c(option = "plasma", name = "Taux de réussite") +  
   theme_void() +
   labs(title = "Taux de réussite moyen au brevet par arrondissement de Paris",
@@ -43,31 +45,14 @@ dta_paris_carte %>% ggplot() +
 carte_taux
 
 #Obtention des données pour le graph taux de réussite public/privé par arrondissement
-dta_paris_pu_pr <- dta %>% filter(code_departement == "075") %>% 
-  select(commune, secteur_d_enseignement, taux_de_reussite) %>% 
-  group_by(commune,secteur_d_enseignement) %>% 
-  summarise(taux_moyen = mean(taux_de_reussite))
-
-dta_paris_pu_pr$commune <- substr(as.character(dta_paris_pu_pr$commune), 4, nchar(as.character(dta_paris_pu_pr$commune)))
-dta_paris_pu_pr$commune <- as.numeric(dta_paris_pu_pr$commune)
-
-dta_paris_pu_pr %>% ggplot() +
-  aes(x = commune, y = taux_moyen, fill = secteur_d_enseignement) +
-  geom_bar(stat = "identity", position = position_dodge()) +
-  labs(title = "Taux de réussite au brevet en fonction de l'arrondissement et du secteur d'enseignement")
-#oh putain j'ai une idée
-#on peut juste faire une échelle divergente non ?
 
 #Proportion fille/garcon en 3ème et taux de reussite + coloration privé public
 dta_paris_f_g <- dta %>% filter(code_departement == "075") %>% 
-  mutate(ratio_FG = X3eme_filles/X3emes_garcons) %>% 
-  select(commune, ratio_FG, taux_de_reussite, secteur_d_enseignement) %>% 
-  group_by(commune, secteur_d_enseignement) %>% 
-  summarise(taux_moyen = mean(taux_de_reussite), ratio_FG)
+  mutate(pourcentage_FG = X3eme_filles/(X3emes_garcons+X3eme_filles)) %>% 
+  select(pourcentage_FG, taux_de_reussite, secteur_d_enseignement)
 
 #probleme des collège non mixte
 
 dta_paris_f_g %>% ggplot() +
-  aes(y = ratio_FG, x = taux_moyen, color = secteur_d_enseignement)+
-  geom_point()+
-  geom_smooth()
+  aes(y = pourcentage_FG, x = taux_de_reussite, color = secteur_d_enseignement)+
+  geom_point()
