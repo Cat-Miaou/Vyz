@@ -26,6 +26,24 @@ paris_sf <- st_read(url)
 
 academie_sf <- st_read("Données brutes/fr-en-contour-academies-2020.geojson")
 
+college_pos <- fread("fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre.csv")
+college_pos <- college_pos %>%
+  mutate(numero_uai = as.factor(numero_uai)) %>%
+  select(numero_uai, longitude, latitude)
+
+dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", by.y = "numero_uai")
+
+dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
+
+names(dta)[c(92:107)] <- c("taux_moyen_2008", "taux_moyen_2009", "taux_moyen_2010", "taux_moyen_2011", "taux_moyen_2006",
+                           "taux_moyen_2007", "taux_moyen_2012", "taux_moyen_2017", "taux_moyen_2015", "taux_moyen_2016",
+                           "taux_moyen_2013", "taux_moyen_2014", "taux_moyen_2019", "taux_moyen_2020", "taux_moyen_2018",
+                           "taux_moyen_2021")
+
+for(k in names(dta)[c(92:107)]) {
+  dta[[k]] <- as.numeric(gsub(",", ".", gsub("%", "", as.character(dta[[k]])))) / 100
+}
+
 # academie <- filter(academie, ! name %in% c("La Réunion","Martinique","Guadeloupe","Guyane","Mayotte"))
 
 academie_sf <- st_crop(academie_sf,xmin = -8 , xmax = 10, ymin =41 , ymax = 52)
@@ -85,14 +103,6 @@ academie_graph
 
 
 
-college_pos <- fread("fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre.csv")
-college_pos <- college_pos %>%
-  mutate(numero_uai = as.factor(numero_uai)) %>%
-  select(numero_uai, longitude, latitude)
-
-dta <- data.table::merge.data.table(dta, college_pos, by.x = "numero_college", by.y = "numero_uai")
-
-dta <- merge(dta, dnb2, by.x = "numero_college", by.y = "UAI")
 
 #Obtention données pour la carte taux de réussite par arrondissement
 dta_paris <- dta %>% filter(code_departement == "075") %>% 
@@ -114,6 +124,11 @@ dta_paris$c_ar <- as.numeric(dta_paris$c_ar)
 
 dta_paris_carte <- paris_sf %>%
   left_join(dta_paris, by = "c_ar")
+
+best_school_forever <- dta %>%
+  mutate(moyenne_15ans = rowMeans(across(92:107), na.rm = TRUE)) %>%
+  arrange(desc(moyenne_15ans))
+
 
 #Création de la carte
 #carte_taux <- 
