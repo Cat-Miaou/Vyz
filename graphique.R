@@ -4,6 +4,7 @@ library(ggplot2)
 library(dplyr)
 library(RColorBrewer)
 library(data.table)
+library(scales)
 
 #Importation données
 dta <- read.csv("donnees-dnb.csv", dec = ",", stringsAsFactors = TRUE)
@@ -36,14 +37,52 @@ dta_academie <- dta %>%
   summarise(taux_moyen = mean(taux_de_reussite)) %>% 
   select(libelle_academie, taux_moyen)
 
+dta_academie_pu_pr <- dta %>% 
+  group_by(libelle_academie,secteur_d_enseignement) %>% 
+  summarise(nombre_inscrits = sum(inscrits)) %>% 
+  select(libelle_academie, secteur_d_enseignement,nombre_inscrits)
+
+dta_academie_pu_pr <- dta_academie_pu_pr %>% 
+  pivot_wider(names_from = secteur_d_enseignement, values_from = nombre_inscrits)
+
 academie_carte <- academie_sf %>% 
   left_join(dta_academie, "libelle_academie")
 
-academie_carte %>% ggplot() +
-  geom_sf(aes(fill=taux_moyen),color="black")+
+academie_carte <- academie_carte %>% 
+  left_join(dta_academie_pu_pr, "libelle_academie")
+
+
+academie_barres <- academie_carte %>%
+  mutate(
+    total_inscrits = PUBLIC + PRIVE,           
+    ratio_public = PUBLIC / total_inscrits,   
+    ratio_prive = PRIVE / total_inscrits
+    )      
+
+academie_graph <-  
+  ggplot() +
+  geom_sf(data=academie_carte,aes(fill=taux_moyen),color="black")+
   theme_minimal()+
-  scale_fill_distiller(palette = "Blues")
-  labs(title = "Taux de réussite au brevet par academies de France Métropolitaine")
+  scale_fill_distiller(palette = "RdBu",
+                       direction = -1,
+                       name = "Taux de réussite",
+                       values = scales::rescale(c(min(academie_carte$taux_moyen),87.7,max(academie_carte$taux_moyen)))) +
+  theme(panel.background = element_rect(fill = "white"),
+        strip.background = element_rect(fill = "white")) +
+  labs(title = "Taux de réussite moyen au brevet par academies de France Métropolitaine")+
+  geom_col(
+  data = academie_barres,
+  aes(
+    x = libelle_academie,
+    y = -0.5,                  
+    fill = "public",
+    height = ratio_public
+  ),
+  position = "stack",         
+  width = 0.4)
+
+academie_graph
+
 
 
 college_pos <- fread("fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre.csv")
