@@ -192,8 +192,7 @@ test2 %>% ggplot() +
   )+
   theme_minimal() +
   labs(
-    title = "Taux de réussite au brevet par académie en fonction du secteur d'enseignement",
-    subtitle = "La ligne en pointillés violette correspond à la moyenne nationale",
+    title = "Taux de réussite au brevet par académie\nen fonction du secteur d'enseignement en 2021",
     x = "Académie (pourcentage de collège public)",
     color = "Secteur d'Enseignement",
     y = "Taux moyen de réussite au brevet",
