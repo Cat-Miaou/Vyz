@@ -315,7 +315,7 @@ ggplot() +
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   annotate("segment", x = 2015, xend = 2016.95, y = 0.6, yend = 0.7, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
-  annotate("segment", x = 2018.5, xend = 2017.95, y = 0.42, yend = 0.62, 
+  annotate("segment", x = 2018.5, xend = 2018.05, y = 0.42, yend = 0.62, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   # Mise en place des labels pour 2011, 2017 et 2018
   geom_label(aes(x = 2008.5, y = 0.58, label = "Histoire des arts"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
@@ -331,10 +331,10 @@ ggplot() +
       "bien" = "#E6AB02",
       "très_bien" = "#66A61E", 
       "Moyenne générale" =  "#7570B3",
-      "2006" = "blue", 
-      "2011" = "blue", 
-      "2017" = "blue", 
-      "2018" = "blue", 
+      "2006" = "#1B9E77", 
+      "2011" = "#1B9E77", 
+      "2017" = "#1B9E77", 
+      "2018" = "#1B9E77", 
       "2020" = "#E7298A"
     ),
     breaks = c("Moyenne générale", "assez_bien", "bien", "très_bien", "2006", "2020"),
@@ -378,5 +378,4 @@ ggplot() +
 
   colors_set2 <- brewer.pal(n = 8, name = "Dark2")  # "Set2" a jusqu'à 8 couleurs
   print(colors_set2)  # Liste des couleurs en format hexadécimal
-
 
