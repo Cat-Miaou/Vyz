@@ -196,7 +196,8 @@ test2 %>% ggplot() +
     subtitle = "La ligne en pointillés violette correspond à la moyenne nationale",
     x = "Académie (pourcentage de collège public)",
     color = "Secteur d'Enseignement",
-    y = "Taux moyen de réussite au brevet"
+    y = "Taux moyen de réussite au brevet",
+    caption = "Source : Data.gouv.fr"
   ) +
   scale_color_manual(values = c("Privé" = "darkgoldenrod1",
                                 "Public" = "dodgerblue2",
@@ -221,6 +222,7 @@ test2 %>% ggplot() +
                              r = 10,
                              b = 10,
                              l = 55),
+        legend.key.spacing.y = unit(0.25,"cm"),
         legend.title = element_blank(),
         legend.text = element_text(size = 15)
   ) 
