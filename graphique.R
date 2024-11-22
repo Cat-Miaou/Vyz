@@ -322,10 +322,9 @@ ggplot() +
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   # Mise en place des labels pour 2011, 2017 et 2018
   geom_label(aes(x = 2008.5, y = 0.58, label = "Histoire des arts"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
-  geom_label(aes(x = 2015, y = 0.58, label = "Contrôle continu"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
+  geom_label(aes(x = 2015, y = 0.58, label = "Mise en place \ndu contrôle continu"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   geom_label(aes(x = 2014.5, y = 0.43, label = "2 séries: générale et \nprofessionnelle"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
-  geom_label(aes(x = 2018.5, y = 0.4, label = " Épreuves finales \nplus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
-  # Configuration de l'axe Y et des labels
+  geom_label(aes(x = 2018.5, y = 0.4, label = " Épreuves finales \nplus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +  # Configuration de l'axe Y et des labels
   scale_y_continuous(labels = scales::percent,
                      breaks = c(0.25, 0.5, 0.75, 1),
                      limits = c(0, 1)) +
