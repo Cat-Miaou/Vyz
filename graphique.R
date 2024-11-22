@@ -308,7 +308,6 @@ ggplot() +
   geom_point(data = dta_admis_mean2, size = 3, aes(x = year, y = Proportion, color = Mention)) +
   geom_line(data = dta_admis_mean2, aes(x = year, y = Proportion, color = Mention)) +
   # Lignes verticales de référence
-  geom_vline(aes(xintercept = 2006, color = "2006"), linetype = "dashed") + 
   geom_vline(aes(xintercept = 2011, color = "2011"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2017, color = "2017"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2018, color = "2018"), linetype = "dashed") +
@@ -326,7 +325,7 @@ ggplot() +
   # Mise en place des labels pour 2011, 2017 et 2018
   geom_label(aes(x = 2008.5, y = 0.58, label = "Histoire des arts"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   geom_label(aes(x = 2015, y = 0.58, label = "Mise en place \ndu contrôle continu"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
-  geom_label(aes(x = 2014.5, y = 0.43, label = "2 séries: générale et \nprofessionnelle"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
+  geom_label(aes(x = 2014.5, y = 0.43, label = "2 séries : générale et \nprofessionnelle"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   geom_label(aes(x = 2018.5, y = 0.4, label = " Épreuves finales \nplus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +  # Configuration de l'axe Y et des labels
   scale_y_continuous(labels = scales::percent,
                      breaks = c(0.25, 0.5, 0.75, 1),
@@ -344,13 +343,13 @@ ggplot() +
       "2013" = "#1B9E77",
       "2020" = "#E7298A"
     ),
-    breaks = c("Moyenne générale", "assez_bien", "bien", "très_bien", "2006", "2020"),
+    breaks = c("Moyenne générale", "assez_bien", "bien", "très_bien", "2011", "2020"),
     labels = c(
-      "assez_bien" = "Assez Bien",
-      "bien" = "Bien",
-      "très_bien" = "Très Bien",
+      "assez_bien" = "Mention Assez Bien",
+      "bien" = "Mention Bien",
+      "très_bien" = "Mention Très Bien",
       "Moyenne générale" = "Pourcentage de réussite",
-      "2006" = "réformes du brevet",
+      "2011" = "Réformes du brevet",
       "2020" = "Covid-19"
     )
   ) +
@@ -364,11 +363,9 @@ ggplot() +
   ) +
   labs(
     title = "Pourcentage de réussite du brevet et des mentions dans le temps",
-    x = "Année",
-    y = "Pourcentage",
     color = "Légende",
     linetype = "Légende",
-    caption = "Source : Data.gouv.fr"
+    caption = "Source : Data.education.gouv.fr"
   ) +
   theme_minimal() +
   theme(
@@ -377,7 +374,16 @@ ggplot() +
     panel.grid.minor.x = element_line(color = "gray80", linetype = "solid"),
     # Conserver les axes
     axis.line = element_line(color = "black"),
-    plot.title = element_text(face = "bold")
+    plot.title = element_text(face = "bold", size = 25),
+    legend.text = element_text(size = 15),
+    legend.key.size = unit(1.5, "lines"),
+    legend.key.spacing.y = unit(0.17, "cm"),
+    legend.title = element_text(size = 15, face = "bold"),
+    plot.caption = element_text(size = 12, hjust = 1, face = "italic"),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15),
+    axis.title = element_blank()
+    
   )
 
 
