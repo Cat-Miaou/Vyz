@@ -75,7 +75,7 @@ academie_barres <- academie_carte %>%
     total_inscrits = PUBLIC + PRIVE,           
     ratio_public = PUBLIC / total_inscrits,   
     ratio_prive = PRIVE / total_inscrits
-    )      
+  )      
 
 academie_graph <-  
   ggplot() +
@@ -89,14 +89,14 @@ academie_graph <-
         strip.background = element_rect(fill = "white")) +
   labs(title = "Taux de réussite moyen au brevet par academies de France Métropolitaine")+
   geom_col(
-  data = academie_barres,
-  aes(
-    x = libelle_academie,
-    y = -0.5,                  
-    fill = "public"
-  ),
-  position = "stack",         
-  width = 0.4)
+    data = academie_barres,
+    aes(
+      x = libelle_academie,
+      y = -0.5,                  
+      fill = "public"
+    ),
+    position = "stack",         
+    width = 0.4)
 
 academie_graph
 
@@ -195,8 +195,7 @@ test2 %>% ggplot() +
     title = "Taux de réussite au brevet par académie\nen fonction du secteur d'enseignement en 2021",
     x = "Académie (pourcentage de collège public)",
     color = "Secteur d'Enseignement",
-    y = "Taux moyen de réussite au brevet",
-    caption = "Source : Data.gouv.fr"
+    y = "Taux moyen de réussite au brevet"
   ) +
   scale_color_manual(values = c("Privé" = "darkgoldenrod1",
                                 "Public" = "dodgerblue2",
@@ -221,7 +220,6 @@ test2 %>% ggplot() +
                              r = 10,
                              b = 10,
                              l = 55),
-        legend.key.spacing.y = unit(0.25,"cm"),
         legend.title = element_blank(),
         legend.text = element_text(size = 15)
   ) 
@@ -390,6 +388,6 @@ ggplot() +
 
 
 
-  colors_set2 <- brewer.pal(n = 8, name = "Dark2")  # "Set2" a jusqu'à 8 couleurs
-  print(colors_set2)  # Liste des couleurs en format hexadécimal
+colors_set2 <- brewer.pal(n = 8, name = "Dark2")  # "Set2" a jusqu'à 8 couleurs
+print(colors_set2)  # Liste des couleurs en format hexadécimal
 
