@@ -309,17 +309,21 @@ ggplot() +
   geom_vline(aes(xintercept = 2011, color = "2011"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2017, color = "2017"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2018, color = "2018"), linetype = "dashed") +
+  geom_vline(aes(xintercept = 2013, color = "2013"), linetype = "dashed") +
   geom_vline(aes(xintercept = 2020, color = "2020"), linetype = "dashed") +
   # Mise en place des flèches pour 2011, 2017, et 2018
   annotate("segment", x = 2008.5, xend = 2010.95, y = 0.6, yend = 0.7, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   annotate("segment", x = 2015, xend = 2016.95, y = 0.6, yend = 0.7, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
+  annotate("segment", x = 2014.5, xend = 2013.05, y = 0.45, yend = 0.58, 
+           arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   annotate("segment", x = 2018.5, xend = 2018.05, y = 0.42, yend = 0.62, 
            arrow = arrow(length = unit(0.2, "cm")), color = "#666666") +
   # Mise en place des labels pour 2011, 2017 et 2018
   geom_label(aes(x = 2008.5, y = 0.58, label = "Histoire des arts"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   geom_label(aes(x = 2015, y = 0.58, label = "Contrôle continu"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
+  geom_label(aes(x = 2014.5, y = 0.43, label = "2 séries: générale et \nprofessionnelle"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   geom_label(aes(x = 2018.5, y = 0.4, label = " Épreuves finales \nplus importantes"), color = "#666666", fill = "white", size = 5, label.size = 0.5, label.padding = unit(0.3, "lines")) +
   # Configuration de l'axe Y et des labels
   scale_y_continuous(labels = scales::percent,
@@ -335,6 +339,7 @@ ggplot() +
       "2011" = "#1B9E77", 
       "2017" = "#1B9E77", 
       "2018" = "#1B9E77", 
+      "2013" = "#1B9E77",
       "2020" = "#E7298A"
     ),
     breaks = c("Moyenne générale", "assez_bien", "bien", "très_bien", "2006", "2020"),
