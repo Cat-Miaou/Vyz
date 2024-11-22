@@ -133,7 +133,7 @@ carte_taux <- dta_paris_carte %>% ggplot() +
   labs(title = "Taux de réussite moyen au brevet par arrondissement de Paris",
        caption = "Source: GeoJSON + data.gouv")
 
-
+carte_taux
 
 #Obtention des données pour le graph taux de réussite public/privé par arrondissement
 
@@ -198,6 +198,9 @@ test2 %>% ggplot() +
     color = "Secteur d'Enseignement",
     y = "Taux moyen de réussite au brevet"
   ) +
+  scale_color_manual(values = c("Privé" = "darkgoldenrod1",
+                                "Public" = "dodgerblue2",
+                                "Moyenne\nnationale" = "mediumorchid2")) +
   ylim(80, 100)+
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1,
