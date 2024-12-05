@@ -114,13 +114,49 @@ function(input, output, session) {
       )
     } else if (input$layer == "8") {
       tagList(
-        
+        textInput(inputId = "texttitle",
+                  label = "Plot title",
+                  value = "Title"),
+        textInput(inputId = "textsubtitle",
+                  label = "Plot subtitle",
+                  value = "Subtitle"),
+        textInput(inputId = "sizetitle",
+                  label = "Title size",
+                  value = "10"),
+        textInput(inputId = "sizesubtitle",
+                  label = "Subtitle size",
+                  value = "10")
       )
-    } else {
+    } else if (input$layer == "9") {
       tagList(
-        dateInput("date1", "Choisissez une date pour Option 3:"),
-        radioButtons("radio1", "Choisissez une option:", choices = c("A", "B", "C"))
+        textInput(inputId = "textxtitle",
+                  label = "Abscissa title",
+                  value = "Abscissa Title"),
+        textInput(inputId = "sizextitle",
+                  label = "Absicissa title size",
+                  value = "10"),
+        textInput(inputId = "sizextext",
+                 label = "Absicissa text size",
+                 value = "10"),
+        textInput(inputId = "anglextext",
+                  label = "angle Abscissa text",
+                  value = "0")
       )
+    }  else {
+      tagList(
+        textInput(inputId = "textytitle",
+                  label = "Abscissa title",
+                  value = "Abscissa Title"),
+        textInput(inputId = "sizeytitle",
+                  label = "Ordinate title size",
+                  value = "10"),
+        textInput(inputId = "sizeytext",
+                 label = "Ordinate text size",
+                 value = "10"),
+        textInput(inputId = "angleytext",
+                  label = "angle ordinate text",
+                  value = "0")
+        )
     }
   })
   
@@ -149,7 +185,22 @@ function(input, output, session) {
                                           linewidth = ifelse(!nzchar(input$linewidthvline), 0.3, as.numeric(input$linewidtvline)))+
                                geom_point(alpha = input$affichepoint,
                                           shape = ifelse(!nzchar(input$shapepoint), 19, as.numeric(input$shapepoint)),
-                                          size = ifelse(!nzchar(input$sizepoint), 1.5, as.numeric(input$sizepoint)))
+                                          size = ifelse(!nzchar(input$sizepoint), 1.5, as.numeric(input$sizepoint)))+
+                               labs(title = input$texttitle,
+                                    subtitle = input$textsubtitle,
+                                    x = input$textxtitle,
+                                    y = input$textytitle)+
+                               theme(plot.title = element_text(hjust = 0.5,
+                                                               size = as.numeric(input$sizetitle)),
+                                     plot.subtitle = element_text(hjust = 0.5,
+                                                                  size = as.numeric(input$sizesubtitle)),
+                                     axis.title.x = element_text(size = as.numeric(input$sizextitle)),
+                                     axis.text.x = element_text(angle = as.numeric(input$anglextext),
+                                                                size = as.numeric(input$sizextext)),
+                                     axis.title.y = element_text(size = as.numeric(input$sizeytitle)),
+                                     axis.text.y = element_text(angle = as.numeric(input$angleytext),
+                                                                size = as.numeric(input$sizeytext))
+                                     )
                                
                              )
 

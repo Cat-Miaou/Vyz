@@ -30,11 +30,11 @@ fluidPage(
                         selected = "NULL"),
             selectInput(inputId = "layer",
                         label = "Choose which layer you want to change",
-                        choices = c("abline" = 1,
+                        choices = c("point" = 7,
                                     "bar" = 2,
                                     "boxplot" = 3,
                                     "vline" = 5,
-                                    "point" = 7,
+                                    "abline" = 1,
                                     "Title" = 8,
                                     "Abcsissa" = 9,
                                     "Ordinate" = 10)
@@ -45,6 +45,6 @@ fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
           plotOutput("graph")
-        )
+          )
     )
 )
