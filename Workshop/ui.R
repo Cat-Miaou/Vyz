@@ -33,12 +33,11 @@ fluidPage(
                         choices = c("abline" = 1,
                                     "bar" = 2,
                                     "boxplot" = 3,
-                                    "col" = 4,
                                     "vline" = 5,
-                                    "line" = 6,
                                     "point" = 7,
-                                    "labs" = 8,
-                                    "theme" = 9)
+                                    "Title" = 8,
+                                    "Abcsissa" = 9,
+                                    "Ordinate" = 10)
                         ),
             uiOutput("dynamic_inputs")
             ),
