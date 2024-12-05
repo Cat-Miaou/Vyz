@@ -145,8 +145,8 @@ function(input, output, session) {
     }  else {
       tagList(
         textInput(inputId = "textytitle",
-                  label = "Abscissa title",
-                  value = "Abscissa Title"),
+                  label = "Ordinate title",
+                  value = "Ordinate Title"),
         textInput(inputId = "sizeytitle",
                   label = "Ordinate title size",
                   value = "10"),
