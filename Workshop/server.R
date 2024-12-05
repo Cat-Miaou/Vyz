@@ -182,7 +182,7 @@ function(input, output, session) {
                                           alpha = input$affichevline,
                                           color = ifelse(input$affichevline == FALSE, "black", input$colorvline),
                                           linetype = input$linetypevline,
-                                          linewidth = ifelse(!nzchar(input$linewidthvline), 0.3, as.numeric(input$linewidtvline)))+
+                                          linewidth = ifelse(!nzchar(input$linewidthvline), 0.3, as.numeric(input$linewidthvline)))+
                                geom_point(alpha = input$affichepoint,
                                           shape = ifelse(!nzchar(input$shapepoint), 19, as.numeric(input$shapepoint)),
                                           size = ifelse(!nzchar(input$sizepoint), 1.5, as.numeric(input$sizepoint)))+
@@ -203,5 +203,48 @@ function(input, output, session) {
                                      )
                                
                              )
+  
+output$code <- renderPrint(glue(
+    "data %>% ggplot(aes_string(x = '{input$aesx}', y = '{input$aesy}', fill = '{input$fill_variable}'))+
+  theme_minimal()+
+  geom_abline(intercept = {input$interceptabline},
+              slope = {input$slopeabline},
+              alpha = {input$afficheabline},
+              color = '{input$colorabline}',
+              linetype = '{input$linetypeabline}',
+              linewidth = {input$linewidthabline})+
+  geom_bar(alpha = {input$affichebar},
+           show.legend = {input$showlegendbar},
+           position = '{input$positionbar}',
+           stat = 'identity') +
+  geom_boxplot(alpha = {input$afficheboxplot},
+               color = '{input$colorboxplot}',
+               linetype = '{input$linetypeboxplot}',
+               linewidth = {input$linewidthboxplot},
+               show.legend = {input$showlegendboxplot}) +
+  geom_vline(xintercept = {input$interceptvline},
+             alpha = {input$affichevline},
+             color = '{input$colorvline}',
+             linetype = '{input$linetypevline}',
+             linewidth = {input$linewidthvline}) +
+  geom_point(alpha = {input$affichepoint},
+             shape = {input$shapepoint},
+             size = {input$sizepoint})+
+  labs(title = '{input$texttitle}',
+       subtitle = '{input$textsubtitle}',
+       x = '{input$textxtitle}',
+       y = '{input$textytitle}')+
+  theme(plot.title = element_text(hjust = 0.5,
+                                  size = {input$sizetitle}),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     size = {input$sizesubtitle}),
+        axis.title.x = element_text(size = {input$sizextitle}),
+        axis.text.x = element_text(angle = {input$anglextext},
+                                   size = {input$sizextext}),
+        axis.title.y = element_text(size = {input$sizeytitle}),
+        axis.text.y = element_text(angle = {input$angleytext},
+                                   size = {input$sizeytext})
+  )
+"))
 
 }
